@@ -1,0 +1,35 @@
+# Update the weather data at the latest location
+weather_data = get_weather_data(lat, lon, api_key)
+
+# Save and convert the data into a 
+dump_data = json.dumps(weather_data)
+load_data = json.loads(dump_data)
+
+# Set variables for commonly used data
+wind_speed = round(load_data['wind']['speed'] * 2.2369, 2)
+wind_direction = get_wind_direction(load_data['wind']['deg'])
+current_location_name = load_data['name']
+
+#Save current location, and calculate the next location (destination)
+current_location = (lat, lon)
+destination = geopy.distance.distance(miles=wind_speed).destination((lat, lon), bearing=load_data['wind']['deg'])
+
+# Draw a line between current location and next location
+folium.PolyLine(locations=[(lat, lon), (destination.latitude, destination.longitude)], color="blue").add_to(tumble_map)
+
+# Update lat and lon to new location
+lat, lon = destination.latitude, destination.longitude
+new_location = (lat, lon)
+
+# Draw a marker on map at new position, and app
+folium.Marker([lat, lon], popup=current_location_name).add_to(tumble_map)
+
+# Add most recent distance to total distance
+total_distance += round(geodesic(current_location, new_location).miles, 2)
+
+# Print Results
+print('Wind Speed: ' + str(wind_speed) + ' miles per hour')
+print('Wind Direction: ' + wind_direction)
+print('Current Location: ' + current_location_name)
+print('Total Distance Travelled: ' + str(total_distance) + ' Miles')
+print('\n')
