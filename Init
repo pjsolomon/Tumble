@@ -1,0 +1,41 @@
+# PJ Solomon, last edited on April 9 2024
+# Tumble follows the theoretical path of a tumble weed, using live wind data
+#All Rights Reserved
+
+import requests
+import json
+import math
+import geopy
+import folium
+
+import metpy.calc as mpcalc
+from metpy.units import units
+from geopy.distance import geodesic
+
+# Set total distance to 0
+total_distance = 0
+
+# Function to pull weather data from openweathermap.com, JSON format
+def get_weather_data(lat, lon, api_key):
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
+    params = {
+        'lat': lat,
+        'lon': lon,
+        'appid': api_key
+    }
+    response = requests.get(base_url, params=params)
+    weather_data = response.json()
+    return weather_data
+
+# Common variable declarations, including starting point, and creating a Folium Map
+api_key = 'INSERT API KEY HERE'
+lat = 42  # latitude for Roy, UT
+lon = -111  # longitude for Roy, UT
+tumble_map = folium.Map(location=[lat, lon], zoom_start=9)
+folium.Marker([lat, lon], popup='Start').add_to(tumble_map)
+
+
+# Function to convert wind direction from angle to compass direction 
+def get_wind_direction(degree):
+    dir_str = mpcalc.angle_to_direction(degree)
+    return(dir_str) 
