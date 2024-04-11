@@ -11,9 +11,11 @@ import folium
 import metpy.calc as mpcalc
 from metpy.units import units
 from geopy.distance import geodesic
+from datetime import datetime
 
-# Set total distance to 0
+# Set total distance to 0, and clear all existing points
 total_distance = 0
+points = []
 
 # Function to pull weather data from openweathermap.com, JSON format
 def get_weather_data(lat, lon, api_key):
@@ -28,12 +30,11 @@ def get_weather_data(lat, lon, api_key):
     return weather_data
 
 # Common variable declarations, including starting point, and creating a Folium Map
-api_key = 'INSERT API KEY HERE'
-lat = 42  # latitude for Roy, UT
-lon = -111  # longitude for Roy, UT
-tumble_map = folium.Map(location=[lat, lon], zoom_start=9)
-folium.Marker([lat, lon], popup='Start').add_to(tumble_map)
-
+api_key = '8bc6cbc798879c0d1a9e15eb6086646f'
+lat = 41.190462169049354  # latitude for Roy, UT
+lon = -112.02709163449975  # longitude for Roy, UT
+my_map = folium.Map(location=[lat, lon], zoom_start=12)
+start_time = datetime.now()
 
 # Function to convert wind direction from angle to compass direction 
 def get_wind_direction(degree):
