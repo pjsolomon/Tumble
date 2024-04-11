@@ -30,7 +30,7 @@ def get_weather_data(lat, lon, api_key):
     return weather_data
 
 # Common variable declarations, including starting point, and creating a Folium Map
-api_key = '8bc6cbc798879c0d1a9e15eb6086646f'
+api_key = api key
 lat = 41.190462169049354  # latitude for Roy, UT
 lon = -112.02709163449975  # longitude for Roy, UT
 my_map = folium.Map(location=[lat, lon], zoom_start=12)
