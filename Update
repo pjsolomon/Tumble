@@ -1,35 +1,40 @@
 # Update the weather data at the latest location
 weather_data = get_weather_data(lat, lon, api_key)
 
-# Save and convert the data into a 
+# Save and convert the data into a Python Library
 dump_data = json.dumps(weather_data)
 load_data = json.loads(dump_data)
 
-# Set variables for commonly used data
+# Add the current point to the map, set commonly used variables
+points.append((lat, lon))
 wind_speed = round(load_data['wind']['speed'] * 2.2369, 2)
 wind_direction = get_wind_direction(load_data['wind']['deg'])
 current_location_name = load_data['name']
 
-#Save current location, and calculate the next location (destination)
+# Set Current Time, calculate elapsed time since last point
+current_time = datetime.now()
+time_elapsed = current_time - start_time
+time_elapsed_seconds = round(time_elapsed.total_seconds(), 2)
+
+# Calculate new location
 current_location = (lat, lon)
-destination = geopy.distance.distance(miles=wind_speed).destination((lat, lon), bearing=load_data['wind']['deg'])
+destination = geopy.distance.distance(miles=(wind_speed / 3600) * time_elapsed_seconds).destination((lat, lon), bearing=load_data['wind']['deg'])
 
-# Draw a line between current location and next location
-folium.PolyLine(locations=[(lat, lon), (destination.latitude, destination.longitude)], color="blue").add_to(tumble_map)
+# Mark old location on map, and draw a line to the new location
+folium.Marker([lat, lon], popup=current_location_name).add_to(my_map)
+folium.PolyLine(locations=[(lat, lon), (destination.latitude, destination.longitude)], color="blue").add_to(my_map)
 
-# Update lat and lon to new location
+# Set the current location to the new location coords
 lat, lon = destination.latitude, destination.longitude
 new_location = (lat, lon)
 
-# Draw a marker on map at new position, and app
-folium.Marker([lat, lon], popup=current_location_name).add_to(tumble_map)
-
-# Add most recent distance to total distance
+# Update the total distance and set the start_time to the current_time
 total_distance += round(geodesic(current_location, new_location).miles, 2)
+start_time = current_time
 
-# Print Results
+# Print out data
 print('Wind Speed: ' + str(wind_speed) + ' miles per hour')
 print('Wind Direction: ' + wind_direction)
 print('Current Location: ' + current_location_name)
 print('Total Distance Travelled: ' + str(total_distance) + ' Miles')
-print('\n')
+
